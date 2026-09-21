@@ -31,7 +31,7 @@ Các image ngoài được khóa bằng version và manifest digest; model đư�
 
 ## Chuẩn bị máy Linux GPU
 
-Máy đích cần Linux x86-64, NVIDIA driver, NVIDIA Container Toolkit, Docker Engine và Docker Compose. Profile mặc định dùng Qwen3-VL 8B BF16 với context 8K, concurrency ban đầu là 4 và hướng tới GPU khoảng 32 GB VRAM. TEI image mặc định `89-1.9` chỉ dành cho Ada/compute capability 8.9; phải đổi image nếu GPU thuê là Blackwell, Hopper hoặc kiến trúc khác. Nếu model không đạt headroom khi chạy cùng embedding thì dùng 4B làm control hoặc tách embedding sang GPU/CPU khác.
+Máy đích cần Linux x86-64, NVIDIA driver, NVIDIA Container Toolkit, Docker Engine và Docker Compose. Profile mặc định dùng Qwen3-VL 8B BF16 với context 8K, concurrency ban đầu là 4 và hướng tới GPU khoảng 32 GB VRAM. TEI image mặc định `120-1.9` dành cho RTX 5090/Blackwell compute capability 12.0; phải đổi image nếu GPU thuê là Ada, Hopper hoặc kiến trúc khác. Nếu model không đạt headroom khi chạy cùng embedding thì dùng 4B làm control hoặc tách embedding sang GPU/CPU khác.
 
 ```bash
 cd demo

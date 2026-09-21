@@ -44,7 +44,7 @@ services:
     restart: unless-stopped
 
   embedding:
-    image: ${TEI_IMAGE:-ghcr.io/huggingface/text-embeddings-inference:89-1.9@sha256:e47e625ced2385d3dbfdee79ba0380204578e0b27ef1a926783f9b3486aaf109}
+    image: ${TEI_IMAGE:-ghcr.io/huggingface/text-embeddings-inference:120-1.9@sha256:bd8e5b1954146f7fe8590b64b959bc194433c6c38c036592a84d736841ca9400}
     command:
       - --model-id
       - ${EMBEDDING_MODEL:-BAAI/bge-m3}

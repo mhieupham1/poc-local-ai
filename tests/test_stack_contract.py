@@ -46,7 +46,15 @@ def test_default_gpu_profile_uses_pinned_qwen3_vl_8b() -> None:
     assert env_values["LLM_MODEL"] == "Qwen/Qwen3-VL-8B-Instruct"
     assert env_values["LLM_REVISION"] == "0c351dd01ed87e9c1b53cbc748cba10e6187ff3b"
     assert "32 GB NVIDIA GPU target" in env_template
-    assert "TEI image below targets Ada / compute capability 8.9" in env_template
+    assert env_values["TEI_IMAGE"] == (
+        "ghcr.io/huggingface/text-embeddings-inference:120-1.9"
+        "@sha256:bd8e5b1954146f7fe8590b64b959bc194433c6c38c036592a84d736841ca9400"
+    )
+    assert "Blackwell / compute capability 12.0" in env_template
+    assert (
+        "120-1.9@sha256:bd8e5b1954146f7fe8590b64b959bc194433c6c38c036592a84d736841ca9400"
+        in (compose["services"]["embedding"]["image"])
+    )
 
 
 def test_compose_validation_rejects_model_port_published_on_all_interfaces(

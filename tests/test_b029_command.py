@@ -137,6 +137,40 @@ def test_run_writes_human_review_as_a_valid_business_outcome(
     assert "human review required" in (output / "result.md").read_text(encoding="utf-8")
 
 
+def test_run_can_select_the_pdf_fixture_document(tmp_path: Path, monkeypatch: object) -> None:
+    selected_documents: list[Path] = []
+    output = tmp_path / "report"
+    fixture_root = Path(__file__).resolve().parents[1] / "samples" / "b029"
+
+    def fake_data_url(path: Path) -> str:
+        selected_documents.append(path)
+        return "data:image/png;base64,c2FmZS1maXh0dXJl"
+
+    monkeypatch.setattr(command, "B029GatewayClient", _MatchingGateway)  # type: ignore[attr-defined]
+    monkeypatch.setattr(command, "document_to_data_url", fake_data_url)
+
+    exit_code = main(
+        [
+            "poc",
+            "b029",
+            "run",
+            "--case",
+            str(fixture_root / "cases" / "case-01.json"),
+            "--document",
+            "pdf",
+            "--base-url",
+            "https://gateway.example",
+            "--credential-file",
+            str(_credential_file(tmp_path)),
+            "--output",
+            str(output),
+        ]
+    )
+
+    assert exit_code == 0
+    assert selected_documents == [fixture_root / "reports" / "case-01.pdf"]
+
+
 def test_run_rejects_document_path_outside_fixture_root(
     tmp_path: Path, monkeypatch: object
 ) -> None:

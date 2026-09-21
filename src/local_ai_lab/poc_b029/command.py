@@ -53,6 +53,7 @@ def run_case_sync(
     base_url: str,
     credential_file: Path,
     output: Path,
+    document_kind: Literal["png", "pdf"] = "png",
     timeout_seconds: float = 120.0,
 ) -> B029ReportPaths:
     return asyncio.run(
@@ -61,6 +62,7 @@ def run_case_sync(
             base_url=base_url,
             credential_file=credential_file,
             output=output,
+            document_kind=document_kind,
             timeout_seconds=timeout_seconds,
         )
     )
@@ -72,11 +74,12 @@ async def run_case(
     base_url: str,
     credential_file: Path,
     output: Path,
+    document_kind: Literal["png", "pdf"],
     timeout_seconds: float,
 ) -> B029ReportPaths:
     manifest = _load_manifest(case_path)
     fixture_root = _fixture_root(case_path)
-    document_path = _resolve_document_path(case_path, fixture_root, manifest)
+    document_path = _resolve_document_path(case_path, fixture_root, manifest, document_kind)
     rules = _load_rules(manifest, fixture_root)
     image_data_url = document_to_data_url(document_path)
     async with httpx.AsyncClient(
@@ -140,8 +143,11 @@ def _resolve_document_path(
     case_path: Path,
     fixture_root: Path,
     manifest: CaseManifest,
+    document_kind: Literal["png", "pdf"],
 ) -> Path:
-    relative = manifest.report_path or manifest.report_png
+    relative = manifest.report_path or (
+        manifest.report_pdf if document_kind == "pdf" else manifest.report_png
+    )
     if relative is None:
         raise B029CommandError("case manifest does not identify a report document")
     candidate = (case_path.parent / relative).resolve()
@@ -175,9 +181,24 @@ def _embedding_query() -> str:
     return "B-029 production report comparison: " + ", ".join(FIELD_ORDER)
 
 
-def run_command_or_error(**kwargs: object) -> B029ReportPaths:
+def run_command_or_error(
+    *,
+    case_path: Path,
+    base_url: str,
+    credential_file: Path,
+    output: Path,
+    document_kind: Literal["png", "pdf"],
+    timeout_seconds: float,
+) -> B029ReportPaths:
     try:
-        return run_case_sync(**kwargs)  # type: ignore[arg-type]
+        return run_case_sync(
+            case_path=case_path,
+            base_url=base_url,
+            credential_file=credential_file,
+            output=output,
+            document_kind=document_kind,
+            timeout_seconds=timeout_seconds,
+        )
     except (
         B029CommandError,
         DocumentValidationError,

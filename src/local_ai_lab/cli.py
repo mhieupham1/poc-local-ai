@@ -84,6 +84,7 @@ def build_parser() -> argparse.ArgumentParser:
     b029_fixtures.add_argument("--output", required=True, type=Path)
     b029_run = b029_commands.add_parser("run", help="Run one B-029 case through the gateway.")
     b029_run.add_argument("--case", required=True, type=Path)
+    b029_run.add_argument("--document", choices=("png", "pdf"), default="png")
     b029_run.add_argument("--base-url", required=True)
     b029_run.add_argument("--credential-file", required=True, type=Path)
     b029_run.add_argument("--output", required=True, type=Path)
@@ -225,6 +226,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 base_url=args.base_url,
                 credential_file=args.credential_file,
                 output=args.output,
+                document_kind=args.document,
                 timeout_seconds=args.timeout,
             )
         except (B029CommandError, OSError, ValueError) as exc:

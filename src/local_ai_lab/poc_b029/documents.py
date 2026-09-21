@@ -4,7 +4,7 @@ import base64
 from io import BytesIO
 from pathlib import Path
 
-import fitz  # type: ignore[import-untyped]
+import pymupdf
 from PIL import Image, UnidentifiedImageError
 
 MAX_DOCUMENT_BYTES = 5 * 1024 * 1024
@@ -55,16 +55,19 @@ def _verify_image(payload: bytes) -> None:
 
 def _render_single_page_pdf(payload: bytes) -> bytes:
     try:
-        document = fitz.open(stream=payload, filetype="pdf")
+        document = pymupdf.open(stream=payload, filetype="pdf")  # type: ignore[no-untyped-call]
     except (RuntimeError, ValueError) as exc:
         raise DocumentValidationError("PDF cannot be decoded") from exc
     try:
         if document.page_count != 1:
             raise DocumentValidationError("PDF must contain exactly one page")
-        pixmap = document[0].get_pixmap(matrix=fitz.Matrix(2, 2), alpha=False)
-        rendered: object = pixmap.tobytes("png")
+        pixmap = document[0].get_pixmap(
+            matrix=pymupdf.Matrix(2, 2),  # type: ignore[no-untyped-call]
+            alpha=False,
+        )
+        rendered: object = pixmap.tobytes("png")  # type: ignore[no-untyped-call]
         if not isinstance(rendered, bytes):
             raise DocumentValidationError("PDF rendering returned an invalid image")
         return rendered
     finally:
-        document.close()
+        document.close()  # type: ignore[no-untyped-call]

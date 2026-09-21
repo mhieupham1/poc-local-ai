@@ -202,6 +202,32 @@ embedding: ok
 
 Script xác nhận request thiếu/sai token đều nhận `401`, sau đó thử readiness, text, một ảnh public và embedding. Bearer token nằm trong file cấu hình tạm quyền `0600`, không xuất hiện trên command line hoặc response được in.
 
+## 7.1. Chạy B-029 synthetic qua public API
+
+Sau smoke test, quay lại máy có clone source (không chạy lệnh này trong image
+Vast) và dùng cùng base URL + token file. Không thêm `/v1` vào URL:
+
+```bash
+cd /Users/phamhieu/Project/ichi-projects/no13/demo
+
+uv run local-ai-lab poc b029 run \
+  --case samples/b029/cases/case-01.json \
+  --base-url https://four-random-words.trycloudflare.com \
+  --credential-file secrets/vast-api-token \
+  --output reports/b029/case-01
+```
+
+Khi tạo instance mới, chỉ thay `--base-url` bằng Quick Tunnel URL mới. Lệnh gọi
+`/v1/chat/completions` (Vision) và `/v1/embeddings` qua gateway đã xác thực,
+không mở endpoint/domain mới. Thêm `--document pdf` để dùng PDF synthetic của
+cùng case.
+
+Ba file kết quả là `result.json`, `result.md`, `evaluation.json`; không chứa
+scan, base64 hay token. Chọn một thư mục `--output` chưa tồn tại. `match`,
+`mismatch` và `needs_human_review` đều là kết quả chạy hợp lệ; exit `2` biểu thị
+lỗi cấu hình, file, xác thực hay gateway. `evaluation.json` chỉ đánh giá nhãn
+synthetic, không phải accuracy của biểu mẫu thật.
+
 ## 8. Benchmark hiệu năng
 
 Có hai phép đo khác nhau:

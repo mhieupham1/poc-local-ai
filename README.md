@@ -323,6 +323,46 @@ embedding: ok
 Nếu năm dòng trên đều `ok`, public API, xác thực, LLM, Vision và embedding đã
 hoạt động.
 
+## Bước 9.1 — chạy demo nghiệp vụ B-029 qua cùng API
+
+Chạy trên **máy có clone repository** (không phải SSH terminal trong image Vast).
+Lệnh gọi cùng public gateway ở bước 8; không thêm `/v1` vào base URL và không
+cần public domain/service thứ hai.
+
+```bash
+uv run local-ai-lab poc b029 run \
+  --case samples/b029/cases/case-01.json \
+  --base-url "${VAST_BASE_URL}" \
+  --credential-file secrets/vast-api-token \
+  --output reports/b029/case-01
+```
+
+Sau một instance mới hoặc Quick Tunnel mới, chỉ thay giá trị `VAST_BASE_URL`.
+Token vẫn bắt buộc và được đọc từ file quyền `0600`; không đặt nó trong URL hay
+command line. Muốn chạy cùng ca bằng PDF thay vì PNG, thêm `--document pdf`.
+
+Lệnh in ra ba đường dẫn mới trong `reports/b029/case-01/`:
+
+- `result.json`: sáu giá trị Vision đọc được, trạng thái đối chiếu, request ID
+  và ba quy tắc được chọn bằng embedding.
+- `result.md`: bản dễ trình bày cho người nghiệp vụ.
+- `evaluation.json`: so sánh với nhãn ground truth của dữ liệu synthetic.
+
+Thư mục `--output` phải chưa tồn tại để tránh ghi đè report của lần chạy trước.
+`needs_human_review` là kết quả nghiệp vụ hợp lệ (exit `0`), còn lỗi token,
+gateway, file input hoặc cấu hình trả exit `2`. Report không chứa file scan,
+base64 hoặc token. Mười case synthetic có sẵn tại `samples/b029`; muốn tạo một
+bộ PNG độc lập khác thì dùng:
+
+```bash
+uv run local-ai-lab poc b029 fixtures --output /tmp/b029-fixtures
+```
+
+`evaluation.json` chỉ xác nhận integration trên nhãn synthetic; nó chưa phải
+đo lường độ chính xác với biểu mẫu sản xuất thật. Xem
+[B-029 PoC overview](docs/b029-poc-overview.md) và
+[phiếu xin dữ liệu thật đã ẩn danh](docs/b029-data-request.md) trước pilot.
+
 ## Bước 10 — benchmark trên GPU
 
 Chạy các lệnh sau trong terminal SSH của Vast:

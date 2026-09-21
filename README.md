@@ -14,10 +14,19 @@ https://<host>/v1/chat/completions  -> text và Vision
 https://<host>/v1/embeddings        -> embedding
 ```
 
-## Hiểu đúng cách triển khai
+## Chọn đúng runbook trước khi triển khai
 
-Vast instance đã là một container. Không cài Docker, không `git clone` và không
-chạy `docker compose` bên trong Vast.
+Repository có hai cách triển khai **không được trộn lẫn**:
+
+1. **Ubuntu VM + Docker Compose**: dùng khi Vast cấp một Ubuntu VM có Docker daemon. Đây là đường đi của PoC RTX 5090 hiện tại; bắt đầu tại [GPU Stack](docs/gpu-stack.md). Gateway bind loopback, truy cập từ máy cá nhân qua SSH tunnel trước khi quyết định public HTTPS.
+2. **Vast custom template**: dùng image đã build sẵn, không có Docker daemon trong instance. Phần còn lại của README và [Vast first run](docs/vast-ai-first-run.md) mô tả đường này.
+
+Hai đường có base URL, port và token path khác nhau. Không copy lệnh `:18000` hoặc `/run/local-ai/gateway-token` của custom template sang Ubuntu VM; VM Docker dùng Gateway `:8443` và `secrets/gateway-token`.
+
+## Luồng Vast custom template — hiểu đúng cách triển khai
+
+Vast custom template đã là một container. Không cài Docker, không `git clone`
+và không chạy `docker compose` bên trong **loại instance này**.
 
 ```text
 Máy cá nhân                 GitHub Container Registry             Vast.ai
@@ -363,7 +372,7 @@ uv run local-ai-lab poc b029 fixtures --output /tmp/b029-fixtures
 [B-029 PoC overview](docs/b029-poc-overview.md) và
 [phiếu xin dữ liệu thật đã ẩn danh](docs/b029-data-request.md) trước pilot.
 
-## Bước 10 — benchmark trên GPU
+## Bước 10 — benchmark trên GPU (custom template)
 
 Chạy các lệnh sau trong terminal SSH của Vast:
 
@@ -410,7 +419,7 @@ Report text/Vision gồm TTFT, E2E latency, tokens/second, error rate và số r
 đồng thời. Report embedding gồm latency, throughput và error rate. GPU samples
 ghi nhận VRAM, utilization, nhiệt độ và điện khi `nvidia-smi` hoạt động.
 
-## Bước 11 — kiểm tra long context
+## Bước 11 — kiểm tra long context (custom template)
 
 ### 11.1 Tạo workload trên máy cá nhân
 

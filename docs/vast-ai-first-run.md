@@ -1,6 +1,8 @@
-# Vast.ai — hướng dẫn chạy Local AI PoC lần đầu
+# Vast.ai custom template — hướng dẫn chạy Local AI PoC
 
-Tài liệu này dành cho người chưa từng thuê GPU. Sau khi hoàn thành, bạn có một HTTPS base URL với hai chức năng:
+Tài liệu này chỉ dành cho **Vast custom template** (image đã build sẵn, không có Docker daemon trong instance). Nếu bạn thuê **Ubuntu VM có Docker**, dùng [GPU Stack](gpu-stack.md) thay thế; không trộn port và token path của hai runbook.
+
+Sau khi hoàn thành, bạn có một HTTPS base URL với hai chức năng:
 
 ```text
 https://<host>/v1/chat/completions  → Qwen3-VL-8B: text và Vision

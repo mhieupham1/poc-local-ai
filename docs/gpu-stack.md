@@ -91,6 +91,35 @@ Mỗi output chứa `raw.jsonl`, `summary.json` và `summary.md`. Token chỉ đ
 
 `summary.json` có error rate và throughput riêng cho từng mức concurrency. Command benchmark vẫn trả exit code `0` khi đã ghi report thành công, kể cả request inference lỗi; pipeline tự động phải kiểm tra `error_rate` theo acceptance gate của experiment.
 
+## Long-context trên Ubuntu VM
+
+Profile mặc định có `LLM_MAX_MODEL_LEN=8192`, vì vậy chỉ chạy workload 8K trên stack hiện tại. Tải một nguồn public trực tiếp vào VM, sinh ba case có marker ở đầu/giữa/cuối context, rồi benchmark tuần tự ở concurrency 1:
+
+```bash
+mkdir -p benchmarks/sources benchmarks/generated
+curl --fail --location --retry 3 \
+  --output benchmarks/sources/war-and-peace.en.txt \
+  https://www.gutenberg.org/cache/epub/2600/pg2600.txt
+
+uv run local-ai-lab workload long-context \
+  --source benchmarks/sources/war-and-peace.en.txt \
+  --source-id war-and-peace-en \
+  --output benchmarks/generated/war-and-peace-8192.jsonl \
+  --context-windows 8192 \
+  --positions start,middle,end \
+  --reserve-tokens 1024
+
+uv run local-ai-lab bench chat \
+  --workload benchmarks/generated/war-and-peace-8192.jsonl \
+  --credential-file secrets/gateway-token \
+  --concurrency 1 \
+  --requests-per-level 3 \
+  --timeout 600 \
+  --output reports/long-context-8192-5090
+```
+
+Xem `reports/long-context-8192-5090/summary.md`: error rate phải là `0%`, còn ba case `start`, `middle`, `end` phải có `pass_rate` 100%. Chỉ sau khi ghi report 8K mới tăng `LLM_MAX_MODEL_LEN`; thay đổi context, concurrency và GPU memory fraction trong những experiment riêng.
+
 ## Monitoring
 
 ```bash
@@ -132,7 +161,7 @@ Mọi thay đổi phải tạo report mới và không được promote nếu qu
 
 ## Vast.ai và máy on-premise
 
-Docker Compose này dành cho một Linux GPU host/VM có Docker daemon. Vast.ai instance bản chất là một container, vì vậy không mặc định chạy Docker-in-Docker. Trên Vast cần một trong hai cách:
+Docker Compose này dành cho một Linux GPU host/VM có Docker daemon. Vast.ai cung cấp cả custom template (container, không mặc định có Docker daemon) lẫn Ubuntu VM. Ubuntu VM phù hợp với runbook này sau khi `docker --version` và `docker run --gpus all ... nvidia-smi` chạy thành công. Custom template cần một trong hai cách:
 
 - Build một image/template đã chứa các process cần thiết; hoặc
 - Chạy vLLM, gateway và benchmark trực tiếp trong instance, còn Prometheus/Grafana chạy ở máy quản lý qua SSH tunnel.

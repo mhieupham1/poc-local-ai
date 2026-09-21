@@ -96,6 +96,32 @@ def test_bench_command_is_registered() -> None:
     assert embedding_args.bench_command == "embedding"
 
 
+def test_b029_poc_command_is_registered() -> None:
+    parser = build_parser()
+
+    fixture_args = parser.parse_args(["poc", "b029", "fixtures", "--output", "samples/generated"])
+    run_args = parser.parse_args(
+        [
+            "poc",
+            "b029",
+            "run",
+            "--case",
+            "samples/case-01.json",
+            "--base-url",
+            "https://gateway.example",
+            "--credential-file",
+            "secrets/token",
+            "--output",
+            "reports/case-01",
+        ]
+    )
+
+    assert fixture_args.command == "poc"
+    assert fixture_args.poc_command == "b029"
+    assert run_args.poc_command == "b029"
+    assert run_args.b029_command == "run"
+
+
 def test_runtime_env_rejects_missing_credential_file(tmp_path: Path, capsys: object) -> None:
     env_file = tmp_path / ".env"
     env_file.write_text(

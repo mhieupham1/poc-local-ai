@@ -73,6 +73,21 @@ def build_parser() -> argparse.ArgumentParser:
         "--tokenizer-revision",
         default="0c351dd01ed87e9c1b53cbc748cba10e6187ff3b",
     )
+
+    poc_parser = commands.add_parser(
+        "poc", help="Run a synthetic business PoC through the gateway."
+    )
+    poc_commands = poc_parser.add_subparsers(dest="poc_command", required=True)
+    b029_parser = poc_commands.add_parser("b029", help="Compare a synthetic production report.")
+    b029_commands = b029_parser.add_subparsers(dest="b029_command", required=True)
+    b029_fixtures = b029_commands.add_parser("fixtures", help="Generate synthetic B-029 cases.")
+    b029_fixtures.add_argument("--output", required=True, type=Path)
+    b029_run = b029_commands.add_parser("run", help="Run one B-029 case through the gateway.")
+    b029_run.add_argument("--case", required=True, type=Path)
+    b029_run.add_argument("--base-url", required=True)
+    b029_run.add_argument("--credential-file", required=True, type=Path)
+    b029_run.add_argument("--output", required=True, type=Path)
+    b029_run.add_argument("--timeout", type=float, default=120.0)
     return parser
 
 
@@ -185,6 +200,46 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(f"long-context workload invalid: {exc}", file=sys.stderr)
             return 2
         print(json.dumps({"cases": len(cases), "output": str(args.output)}, sort_keys=True))
+        return 0
+
+    if args.command == "poc" and args.poc_command == "b029":
+        from local_ai_lab.poc_b029.command import (
+            B029CommandError,
+            generate_fixtures_command,
+            run_command_or_error,
+        )
+
+        try:
+            if args.b029_command == "fixtures":
+                case_paths = generate_fixtures_command(args.output)
+                print(
+                    json.dumps(
+                        {"cases": len(case_paths), "output": str(args.output)}, sort_keys=True
+                    )
+                )
+                return 0
+            if args.timeout <= 0:
+                raise B029CommandError("timeout must be positive")
+            b029_paths = run_command_or_error(
+                case_path=args.case,
+                base_url=args.base_url,
+                credential_file=args.credential_file,
+                output=args.output,
+                timeout_seconds=args.timeout,
+            )
+        except (B029CommandError, OSError, ValueError) as exc:
+            print(f"B-029 command invalid: {exc}", file=sys.stderr)
+            return 2
+        print(
+            json.dumps(
+                {
+                    "evaluation_json": str(b029_paths.evaluation_json),
+                    "result_json": str(b029_paths.result_json),
+                    "result_markdown": str(b029_paths.result_markdown),
+                },
+                sort_keys=True,
+            )
+        )
         return 0
 
     parser.error("unsupported command")

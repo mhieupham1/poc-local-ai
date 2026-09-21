@@ -1,0 +1,94 @@
+version: 1
+downloaded_at: "2026-09-16"
+sources:
+  - id: war-and-peace-en
+    title: War and Peace
+    language: en
+    purpose: long-context
+    source_url: https://www.gutenberg.org/cache/epub/2600/pg2600.txt
+    catalog_url: https://www.gutenberg.org/ebooks/2600
+    rights_note: Public domain in the USA; Project Gutenberg asks users elsewhere to check local law.
+    files:
+      - path: war-and-peace.en.txt
+        role: original
+        bytes: 3359610
+        sha256: 2d5bb2ad5f422765e714617e21fa31bbaf8958aa79682c86fca6660fcc5d1b2b
+
+  - id: truyen-kieu-vi
+    title: Truyện Kiều
+    language: vi
+    purpose: multilingual-long-context
+    source_url: https://vi.wikisource.org/w/index.php?title=Truy%E1%BB%87n_Ki%E1%BB%81u&action=raw
+    catalog_url: https://vi.wikisource.org/wiki/Truy%E1%BB%87n_Ki%E1%BB%81u
+    rights_note: Source page identifies the work as public domain worldwide.
+    files:
+      - path: truyen-kieu.vi.wiki.txt
+        role: original-wikitext
+        bytes: 148663
+        sha256: a4d0619589ba6b4aa36298b48890994e94e57e4cd198e26c3ce4105fe814515f
+
+  - id: kokoro-ja
+    title: こころ
+    language: ja
+    purpose: multilingual-long-context
+    source_url: https://www.aozora.gr.jp/cards/000148/files/773_ruby_5968.zip
+    catalog_url: https://www.aozora.gr.jp/cards/000148/card773.html
+    rights_note: Distributed by Aozora Bunko; preserve source attribution and verify applicable local law.
+    files:
+      - path: kokoro.ja.shift-jis.zip
+        role: original
+        bytes: 153688
+        sha256: c55d7bf6c7cc5bd960ce291949f38cae9ba6a672a6142c3b9e1a9f5a159fa4c4
+      - path: kokoro.ja.utf8.txt
+        role: derived-utf8
+        bytes: 559512
+        sha256: b5d9ae52972c49da3f5fdc6b5681206dea18cae40b43b302aa68bea26ed9ba35
+
+  - id: vietnam-land-law-2024
+    title: Luật Đất đai 2024
+    language: vi
+    purpose: structured-vietnamese-rag
+    source_url: https://xaydungchinhsach.chinhphu.vn/toan-van-luat-dat-dai-119240221224513596.htm
+    catalog_url: https://xaydungchinhsach.chinhphu.vn/toan-van-luat-dat-dai-119240221224513596.htm
+    rights_note: Official Vietnamese government publication; retain source attribution.
+    files:
+      - path: luat-dat-dai-2024.vi.html
+        role: original-html
+        bytes: 1252103
+        sha256: 6f4e754dffbdbfd6f340bb85d7ea80de32befb428c1230ede22ad84bc126efd6
+
+  - id: nist-ai-rmf-playbook
+    title: NIST AI Risk Management Framework Playbook
+    language: en
+    purpose: rag-citation-pdf
+    source_url: https://airc.nist.gov/docs/AI_RMF_Playbook.pdf
+    catalog_url: https://airc.nist.gov/airmf-resources/playbook/
+    pages: 147
+    rights_note: Official NIST publication; retain source attribution.
+    files:
+      - path: nist-ai-rmf-playbook.en.pdf
+        role: original
+        bytes: 2882270
+        sha256: 65d6101d806502875aadb0fd19a75c3a9cc9a5e9461129e9398a39192d8202d2
+      - path: nist-ai-rmf-playbook.en.txt
+        role: derived-pdftotext-layout
+        bytes: 350245
+        sha256: 96f3fff4953b9a566a3bdb0b149dc6c1e16dc82f16c2384a702aa55fc2e491d7
+
+  - id: nasa-apollo-operations-handbook-emu-volume-1
+    title: Apollo Operations Handbook — Extravehicular Mobility Unit, Volume I
+    language: en
+    purpose: vision-ocr-technical-pdf
+    source_url: https://ntrs.nasa.gov/api/citations/19710001731/downloads/19710001731.pdf
+    catalog_url: https://ntrs.nasa.gov/citations/19710001731
+    pages: 112
+    rights_note: Official NASA Technical Reports Server document; retain source attribution.
+    files:
+      - path: nasa-apollo-operations-handbook-emu-volume-1.en.pdf
+        role: original
+        bytes: 7758451
+        sha256: 8254f396fe391229bc5078bee16eb4a353c382c45e4764148162a9db903249aa
+      - path: nasa-apollo-operations-handbook-emu-volume-1.en.txt
+        role: derived-pdftotext-layout
+        bytes: 160337
+        sha256: 34ae391ca386bec9956fb65bb9ac1129196ded4415e4449936f3104c03cc3fb4

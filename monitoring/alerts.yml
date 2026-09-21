@@ -1,0 +1,48 @@
+groups:
+  - name: local-ai-lab
+    rules:
+      - alert: LocalAIInferenceTargetDown
+        expr: up{job=~"gateway|vllm|embedding|gpu"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          owner: ai-platform
+        annotations:
+          summary: "Local AI component {{ $labels.job }} is unavailable"
+          runbook: "runbooks/service-down.md"
+      - alert: LocalAIGpuMemoryNearlyFull
+        expr: DCGM_FI_DEV_FB_USED / (DCGM_FI_DEV_FB_USED + DCGM_FI_DEV_FB_FREE) > 0.95
+        for: 5m
+        labels:
+          severity: warning
+          owner: ai-platform
+        annotations:
+          summary: "GPU framebuffer memory is above 95%"
+          runbook: "runbooks/gpu-pressure.md"
+      - alert: LocalAIGpuTooHot
+        expr: DCGM_FI_DEV_GPU_TEMP > 85
+        for: 5m
+        labels:
+          severity: critical
+          owner: infrastructure
+        annotations:
+          summary: "GPU temperature is above 85°C"
+          runbook: "runbooks/gpu-pressure.md"
+      - alert: LocalAIVllmQueueSustained
+        expr: vllm:num_requests_waiting > 0
+        for: 5m
+        labels:
+          severity: warning
+          owner: ai-platform
+        annotations:
+          summary: "vLLM has a sustained request queue"
+          runbook: "runbooks/queue-saturation.md"
+      - alert: LocalAIGatewayRejectingRequests
+        expr: rate(local_ai_gateway_rejections_total[5m]) > 0.2
+        for: 5m
+        labels:
+          severity: warning
+          owner: security
+        annotations:
+          summary: "Gateway rejection rate is elevated"
+          runbook: "runbooks/gateway-rejections.md"

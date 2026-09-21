@@ -1,0 +1,30 @@
+.env
+config/gpu.env
+config/vast-client.env
+.venv/
+.tools/
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+*.py[cod]
+
+# Secrets and identity material
+secrets/*
+!secrets/.gitkeep
+*.pem
+*.key
+
+# Large or sensitive runtime artifacts
+models/
+weights/
+uploads/
+reports/*
+!reports/.gitkeep
+*.jsonl.raw
+
+# Downloaded public benchmark sources (tracked via manifest only)
+benchmarks/sources/*
+!benchmarks/sources/README.md
+!benchmarks/sources/manifest.yaml
+benchmarks/generated/

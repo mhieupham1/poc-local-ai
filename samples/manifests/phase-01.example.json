@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "phase-01-example-only",
+  "config_fingerprint": "00000000",
+  "started_at": "2026-09-14T03:00:00Z",
+  "git_commit": "0000000000000000000000000000000000000000",
+  "hardware": {
+    "cpu": "example",
+    "ram_gb": 0
+  },
+  "software": {
+    "python": "3.12"
+  },
+  "models": {
+    "llm": "Qwen/Qwen3-VL-8B-Instruct@1111111111111111111111111111111111111111",
+    "embedding": "BAAI/bge-m3@2222222222222222222222222222222222222222"
+  },
+  "serving": {
+    "target": "example",
+    "streaming": true
+  },
+  "workload_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+}

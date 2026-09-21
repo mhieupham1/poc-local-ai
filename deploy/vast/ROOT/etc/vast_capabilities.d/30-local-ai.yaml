@@ -1,0 +1,13 @@
+openai_endpoints:
+  - service: "Local AI API"
+    path: /v1
+    capabilities: [chat, embeddings, models]
+    models_path: /v1/models
+
+tools:
+  - name: local-ai-gateway
+    description: Authenticated OpenAI-compatible gateway for Qwen3-VL and BGE-M3
+
+image:
+  name: Local AI PoC
+  preinstalled: Qwen3-VL and BGE-M3 launchers with an authenticated gateway

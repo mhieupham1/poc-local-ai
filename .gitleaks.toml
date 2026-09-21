@@ -1,0 +1,6 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Downloaded public benchmark documents are ignored by Git and Docker."
+paths = ['''^benchmarks/sources/''']

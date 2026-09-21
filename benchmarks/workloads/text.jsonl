@@ -1,0 +1,2 @@
+{"id":"text-vi-001","payload":{"model":"local-vision-language","messages":[{"role":"user","content":"Trả lời đúng một câu: AI local là gì?"}],"temperature":0,"max_tokens":64}}
+{"id":"text-vi-002","payload":{"model":"local-vision-language","messages":[{"role":"user","content":"Liệt kê ba rủi ro khi vận hành mô hình AI nội bộ dưới dạng JSON."}],"temperature":0,"max_tokens":128}}

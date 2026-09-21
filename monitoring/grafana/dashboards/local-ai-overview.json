@@ -1,0 +1,44 @@
+{
+  "annotations": {"list": []},
+  "editable": false,
+  "panels": [
+    {
+      "id": 1,
+      "title": "Service readiness",
+      "type": "timeseries",
+      "targets": [{"expr": "up{job=~\"gateway|vllm|embedding|gpu\"}", "legendFormat": "{{job}}"}],
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+    },
+    {
+      "id": 2,
+      "title": "GPU utilization (%)",
+      "type": "timeseries",
+      "targets": [{"expr": "DCGM_FI_DEV_GPU_UTIL", "legendFormat": "GPU {{gpu}}"}],
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+    },
+    {
+      "id": 3,
+      "title": "GPU memory used (MiB)",
+      "type": "timeseries",
+      "targets": [{"expr": "DCGM_FI_DEV_FB_USED", "legendFormat": "GPU {{gpu}}"}],
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+    },
+    {
+      "id": 4,
+      "title": "vLLM running / waiting requests",
+      "type": "timeseries",
+      "targets": [
+        {"expr": "vllm:num_requests_running", "legendFormat": "running"},
+        {"expr": "vllm:num_requests_waiting", "legendFormat": "waiting"}
+      ],
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+    }
+  ],
+  "schemaVersion": 41,
+  "tags": ["local-ai", "gpu", "inference"],
+  "templating": {"list": []},
+  "time": {"from": "now-1h", "to": "now"},
+  "title": "Local AI Overview",
+  "uid": "local-ai-overview",
+  "version": 1
+}

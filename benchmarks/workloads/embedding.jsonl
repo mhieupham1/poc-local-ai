@@ -1,0 +1,2 @@
+{"id":"embedding-vi-001","payload":{"model":"BAAI/bge-m3","input":["AI local chạy trong hạ tầng do tổ chức kiểm soát.","Gateway kiểm soát quyền truy cập model."]}}
+{"id":"embedding-vi-002","payload":{"model":"BAAI/bge-m3","input":["Quy trình vận hành GPU","Theo dõi VRAM và nhiệt độ","Đo độ trễ suy luận"]}}

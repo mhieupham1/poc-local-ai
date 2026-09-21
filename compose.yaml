@@ -1,0 +1,224 @@
+name: local-ai-lab
+
+services:
+  llm:
+    image: ${VLLM_IMAGE:-vllm/vllm-openai:v0.29.0@sha256:c2914767605584b6d8f45686b82de173ecc99e781897aa3d0a66dacd72c51ae1}
+    command:
+      - --model
+      - ${LLM_MODEL:-Qwen/Qwen3-VL-8B-Instruct}
+      - --revision
+      - ${LLM_REVISION:-0c351dd01ed87e9c1b53cbc748cba10e6187ff3b}
+      - --served-model-name
+      - ${LLM_SERVED_NAME:-local-vision-language}
+      - --dtype
+      - ${LLM_DTYPE:-bfloat16}
+      - --max-model-len
+      - ${LLM_MAX_MODEL_LEN:-8192}
+      - --gpu-memory-utilization
+      - ${LLM_GPU_MEMORY_UTILIZATION:-0.72}
+      - --max-num-seqs
+      - ${LLM_MAX_NUM_SEQS:-4}
+      - --tensor-parallel-size
+      - ${LLM_TENSOR_PARALLEL_SIZE:-1}
+      - --limit-mm-per-prompt
+      - image=${LLM_MAX_IMAGES_PER_PROMPT:-2}
+      - --allowed-media-domains
+      - ${VLLM_ALLOWED_MEDIA_DOMAIN:-qianwen-res.oss-cn-beijing.aliyuncs.com}
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+    gpus: all
+    environment:
+      NVIDIA_VISIBLE_DEVICES: ${LLM_GPU_DEVICES:-all}
+      VLLM_MEDIA_URL_ALLOW_REDIRECTS: "0"
+    ipc: host
+    shm_size: 8gb
+    expose:
+      - "8000"
+    volumes:
+      - hf-cache:/root/.cache/huggingface
+      - vllm-cache:/root/.cache/vllm
+    networks:
+      - inference
+    restart: unless-stopped
+
+  embedding:
+    image: ${TEI_IMAGE:-ghcr.io/huggingface/text-embeddings-inference:89-1.9@sha256:e47e625ced2385d3dbfdee79ba0380204578e0b27ef1a926783f9b3486aaf109}
+    command:
+      - --model-id
+      - ${EMBEDDING_MODEL:-BAAI/bge-m3}
+      - --revision
+      - ${EMBEDDING_REVISION:-5617a9f61b028005a4858fdac845db406aefb181}
+      - --max-client-batch-size
+      - ${EMBEDDING_MAX_BATCH_SIZE:-32}
+      - --max-concurrent-requests
+      - ${EMBEDDING_MAX_CONCURRENT_REQUESTS:-64}
+      - --payload-limit
+      - ${EMBEDDING_PAYLOAD_LIMIT_BYTES:-2000000}
+      - --json-output
+    gpus: all
+    environment:
+      NVIDIA_VISIBLE_DEVICES: ${EMBEDDING_GPU_DEVICES:-all}
+    expose:
+      - "80"
+      - "9000"
+    volumes:
+      - hf-cache:/data
+    networks:
+      - inference
+    restart: unless-stopped
+
+  gateway:
+    build:
+      context: .
+      dockerfile: docker/gateway/Dockerfile
+    environment:
+      GATEWAY_AUTH_MODE: ${GATEWAY_AUTH_MODE:-token}
+      GATEWAY_TOKEN_FILE: /run/secrets/gateway_token
+      GATEWAY_LLM_URL: http://llm:8000
+      GATEWAY_EMBEDDING_URL: http://embedding:80
+      GATEWAY_REQUEST_TIMEOUT_SECONDS: ${GATEWAY_REQUEST_TIMEOUT_SECONDS:-120}
+      GATEWAY_MAX_BODY_BYTES: ${GATEWAY_MAX_BODY_BYTES:-10485760}
+      GATEWAY_MAX_CONCURRENCY: ${GATEWAY_MAX_CONCURRENCY:-8}
+      GATEWAY_ALLOWED_MEDIA_DOMAINS: ${VLLM_ALLOWED_MEDIA_DOMAIN:-qianwen-res.oss-cn-beijing.aliyuncs.com}
+      GATEWAY_OIDC_ISSUER: ${GATEWAY_OIDC_ISSUER:-http://127.0.0.1:8081/realms/local-ai}
+      GATEWAY_OIDC_JWKS_URL: http://keycloak:8080/realms/local-ai/protocol/openid-connect/certs
+      GATEWAY_OIDC_AUDIENCE: ${GATEWAY_OIDC_AUDIENCE:-local-ai-gateway}
+      GATEWAY_REQUIRED_ROLE: ${GATEWAY_REQUIRED_ROLE:-inference.user}
+    secrets:
+      - gateway_token
+    ports:
+      - "127.0.0.1:${GATEWAY_PORT:-8443}:8080"
+    expose:
+      - "8080"
+    networks:
+      - inference
+      - operator
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,noexec,nosuid
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+  prometheus:
+    image: ${PROMETHEUS_IMAGE:-prom/prometheus:v3.5.0@sha256:63805ebb8d2b3920190daf1cb14a60871b16fd38bed42b857a3182bc621f4996}
+    profiles: [monitoring]
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=7d
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "127.0.0.1:${PROMETHEUS_PORT:-9090}:9090"
+    networks:
+      - inference
+      - operator
+    restart: unless-stopped
+
+  grafana:
+    image: ${GRAFANA_IMAGE:-grafana/grafana:12.1.1@sha256:a1701c2180249361737a99a01bc770db39381640e4d631825d38ff4535efa47d}
+    profiles: [monitoring]
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/grafana_admin_password
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+    secrets:
+      - grafana_admin_password
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "127.0.0.1:${GRAFANA_PORT:-3000}:3000"
+    networks:
+      - operator
+    restart: unless-stopped
+
+  dcgm-exporter:
+    image: ${DCGM_EXPORTER_IMAGE:-nvcr.io/nvidia/k8s/dcgm-exporter:4.5.3-4.8.2-distroless@sha256:60d3b00ac80b4ae77f94dae2f943685605585ad9e92fdccda3154d009ae317cc}
+    profiles: [monitoring]
+    gpus: all
+    cap_add:
+      - SYS_ADMIN
+    expose:
+      - "9400"
+    networks:
+      - inference
+    restart: unless-stopped
+
+  keycloak-db:
+    image: ${POSTGRES_IMAGE:-postgres:17.6-bookworm@sha256:f3bd19c606e442c3d7bdfa8002e03fe260a1023351e0ea4598032022b68dd6e3}
+    profiles: [identity]
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD_FILE: /run/secrets/keycloak_db_password
+    secrets:
+      - keycloak_db_password
+    volumes:
+      - keycloak-db-data:/var/lib/postgresql/data
+    networks:
+      - identity
+    restart: unless-stopped
+
+  keycloak:
+    image: ${KEYCLOAK_IMAGE:-quay.io/keycloak/keycloak:26.7.3@sha256:29be7252db0a106f1cd2ac17b9a56ff2668073da645638a38b9fc67deeb2d6c4}
+    profiles: [identity]
+    entrypoint: [/opt/local-ai/keycloak-entrypoint.sh]
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: keycloak-db
+      KC_DB_URL_PORT: "5432"
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD_FILE: /run/secrets/keycloak_db_password
+      KC_HEALTH_ENABLED: "true"
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME: http://127.0.0.1:8081
+    secrets:
+      - keycloak_admin_password
+      - keycloak_db_password
+    volumes:
+      - ./deploy/identity/keycloak-entrypoint.sh:/opt/local-ai/keycloak-entrypoint.sh:ro
+      - ./deploy/identity/keycloak-realm.json:/opt/keycloak/data/import/local-ai-realm.json:ro
+    ports:
+      - "127.0.0.1:${KEYCLOAK_PORT:-8081}:8080"
+    networks:
+      - identity
+      - operator
+      - inference
+    depends_on:
+      - keycloak-db
+    restart: unless-stopped
+
+networks:
+  inference:
+  identity:
+    internal: true
+  operator:
+    internal: true
+
+volumes:
+  hf-cache:
+  vllm-cache:
+  prometheus-data:
+  grafana-data:
+  keycloak-db-data:
+
+secrets:
+  gateway_token:
+    file: ./secrets/gateway-token
+  grafana_admin_password:
+    file: ./secrets/grafana-admin-password
+  keycloak_admin_password:
+    file: ./secrets/keycloak-admin-password
+  keycloak_db_password:
+    file: ./secrets/keycloak-db-password

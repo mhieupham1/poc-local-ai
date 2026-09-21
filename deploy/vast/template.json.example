@@ -1,0 +1,29 @@
+{
+  "name": "poc-local-ai-single-domain",
+  "desc": "Qwen3-VL-8B and BGE-M3 behind one authenticated OpenAI-compatible gateway",
+  "readme": "One HTTPS base URL: /v1/chat/completions for text/vision and /v1/embeddings for embeddings. Keep this template private.",
+  "image": "ghcr.io/your-github-user/poc-local-ai-vast",
+  "tag": "2026-09-15.1",
+  "repo": "",
+  "href": "",
+  "env": "-p 1111:1111 -p 8080:8080 -e PORTAL_CONFIG='localhost:1111:11111:/:Instance Portal|localhost:8080:18000:/:Local AI API' -e LLM_MODEL=Qwen/Qwen3-VL-8B-Instruct -e LLM_REVISION=0c351dd01ed87e9c1b53cbc748cba10e6187ff3b -e LLM_GPU_MEMORY_UTILIZATION=0.72 -e LLM_MAX_MODEL_LEN=8192 -e LLM_MAX_NUM_SEQS=4 -e EMBEDDING_MODEL=BAAI/bge-m3 -e EMBEDDING_REVISION=5617a9f61b028005a4858fdac845db406aefb181 -e EMBEDDING_GPU_MEMORY_UTILIZATION=0.15 -e MODEL_STARTUP_TIMEOUT_SECONDS=1800",
+  "onstart": "",
+  "args_str": "",
+  "runtype": "ssh",
+  "ssh_direct": true,
+  "use_ssh": true,
+  "jup_direct": false,
+  "jupyter_dir": null,
+  "use_jupyter_lab": false,
+  "docker_login_repo": "",
+  "docker_login_user": "",
+  "docker_login_pass": "",
+  "extra_filters": {
+    "gpu_ram": {"gte": 32},
+    "num_gpus": {"eq": 1},
+    "verified": {"eq": true}
+  },
+  "recommended_disk_space": 100,
+  "private": true,
+  "volume_info": null
+}

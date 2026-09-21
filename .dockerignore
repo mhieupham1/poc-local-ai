@@ -1,0 +1,14 @@
+.git
+.venv
+.tools
+.mypy_cache
+.pytest_cache
+.ruff_cache
+reports
+secrets
+models
+weights
+uploads
+benchmarks/sources
+benchmarks/generated
+__pycache__

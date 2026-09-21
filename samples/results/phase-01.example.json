@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "phase-01-example-only",
+  "config_fingerprint": "00000000",
+  "status": "passed",
+  "metrics": {
+    "example_metric": 0.0
+  },
+  "artifacts": {
+    "manifest": "samples/manifests/phase-01.example.json"
+  }
+}

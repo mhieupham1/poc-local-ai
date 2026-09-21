@@ -1,0 +1,1 @@
+{"id":"vision-public-001","payload":{"model":"local-vision-language","messages":[{"role":"user","content":[{"type":"image_url","image_url":{"url":"https://qianwen-res.oss-cn-beijing.aliyuncs.com/Qwen-VL/assets/demo.jpeg"}},{"type":"text","text":"Mô tả ảnh này bằng một câu tiếng Việt."}]}],"temperature":0,"max_tokens":64}}

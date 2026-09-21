@@ -18,7 +18,8 @@ from local_ai_lab.poc_b029.models import (
     FieldName,
 )
 
-DEFAULT_VISION_MODEL = "Qwen/Qwen3-VL-8B-Instruct"
+# This is the OpenAI-compatible name exposed by vLLM, not the Hugging Face ID.
+DEFAULT_VISION_MODEL = "local-vision-language"
 DEFAULT_EMBEDDING_MODEL = "BAAI/bge-m3"
 
 

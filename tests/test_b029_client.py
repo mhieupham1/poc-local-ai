@@ -71,6 +71,7 @@ def test_extract_record_sends_structured_vision_request_with_file_credential(
     assert observed["authorization"] == f"Bearer {'x' * 32}"
     assert isinstance(observed["request_id"], str)
     assert isinstance(payload, dict)
+    assert payload["model"] == "local-vision-language"
     assert payload["stream"] is False
     assert payload["response_format"]["type"] == "json_schema"
     assert payload["messages"][1]["content"][1]["image_url"]["url"].startswith("data:image/png")

@@ -37,12 +37,12 @@ Máy đích cần Linux x86-64, NVIDIA driver, NVIDIA Container Toolkit, Docker 
 cd demo
 cp config/gpu.env.example config/gpu.env
 uv sync --frozen --dev
-bash scripts/init_secrets.sh
+sudo bash scripts/init_secrets.sh
 uv run local-ai-lab stack validate --compose-file compose.yaml --env-file config/gpu.env
 docker compose --env-file config/gpu.env --profile monitoring --profile identity config --quiet
 ```
 
-`init_secrets.sh` cố ý từ chối ghi đè. Nếu secret đã tồn tại thì không chạy lại. Không copy thư mục `secrets/` từ máy phát triển sang server; tạo secret mới trên từng target.
+`init_secrets.sh` cần quyền `root` để gán từng file `0600` cho đúng UID runtime của service. Nếu secret đã tồn tại, script giữ nguyên giá trị và chỉ sửa owner/mode; token không được in ra. Không copy thư mục `secrets/` từ máy phát triển sang server; tạo secret mới trên từng target.
 
 ## Chạy stack tối thiểu
 

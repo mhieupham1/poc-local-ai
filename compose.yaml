@@ -21,7 +21,7 @@ services:
       - --tensor-parallel-size
       - ${LLM_TENSOR_PARALLEL_SIZE:-1}
       - --limit-mm-per-prompt
-      - image=${LLM_MAX_IMAGES_PER_PROMPT:-2}
+      - '{"image": ${LLM_MAX_IMAGES_PER_PROMPT:-2}}'
       - --allowed-media-domains
       - ${VLLM_ALLOWED_MEDIA_DOMAIN:-qianwen-res.oss-cn-beijing.aliyuncs.com}
       - --host

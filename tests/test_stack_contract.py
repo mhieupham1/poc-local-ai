@@ -57,6 +57,25 @@ def test_default_gpu_profile_uses_pinned_qwen3_vl_8b() -> None:
     )
 
 
+def test_llm_multimodal_limit_uses_json_for_current_vllm() -> None:
+    compose = yaml.safe_load(Path("compose.yaml").read_text(encoding="utf-8"))
+    command = compose["services"]["llm"]["command"]
+
+    limit_index = command.index("--limit-mm-per-prompt")
+
+    assert command[limit_index + 1] == '{"image": ${LLM_MAX_IMAGES_PER_PROMPT:-2}}'
+
+
+def test_secret_initializer_assigns_private_files_to_runtime_users() -> None:
+    initializer = Path("scripts/init_secrets.sh").read_text(encoding="utf-8")
+
+    assert 'create_secret "${secret_dir}/gateway-token" "10001:10001"' in initializer
+    assert 'create_secret "${secret_dir}/grafana-admin-password" "472:0"' in initializer
+    assert 'create_secret "${secret_dir}/keycloak-admin-password" "1000:0"' in initializer
+    assert 'create_secret "${secret_dir}/keycloak-db-password" "0:0"' in initializer
+    assert 'chown "${owner}" "${path}"' in initializer
+
+
 def test_compose_validation_rejects_model_port_published_on_all_interfaces(
     tmp_path: Path,
 ) -> None:

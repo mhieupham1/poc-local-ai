@@ -33,7 +33,7 @@ command=(
   --gpu-memory-utilization "${llm_gpu_fraction}"
   --max-num-seqs "${llm_max_num_seqs}"
   --tensor-parallel-size "${llm_tensor_parallel_size}"
-  --limit-mm-per-prompt "image=${llm_max_images}"
+  --limit-mm-per-prompt "{\"image\": ${llm_max_images}}"
   --allowed-media-domains "${allowed_media_domains}"
   --host 127.0.0.1
   --port 8000

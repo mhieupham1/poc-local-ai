@@ -1,0 +1,5 @@
+# Fixture hashes cover exact bytes. Keep textual fixture inputs LF on every OS.
+samples/b029/*.csv text eol=lf
+samples/b029/*.json text eol=lf
+samples/b029/*.md text eol=lf
+samples/b029/SHA256SUMS text eol=lf

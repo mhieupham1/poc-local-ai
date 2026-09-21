@@ -1,0 +1,23 @@
+{
+  "case_id": "case-10",
+  "data_classification": "synthetic",
+  "label": "DEMO DATA — NOT PRODUCTION",
+  "report_png": "../reports/case-10.png",
+  "report_pdf": "../reports/case-10.pdf",
+  "kintone_record": {
+    "work_date": "2026-09-09",
+    "work_order": "WO-260910-003",
+    "process": "PRESS",
+    "item_code": "WLD-800-B",
+    "actual_quantity": 530,
+    "defect_quantity": 2
+  },
+  "expected": {
+    "status": "mismatch",
+    "difference_fields": [
+      "work_date",
+      "process"
+    ]
+  },
+  "scenario": "mismatch — work date and process differ"
+}

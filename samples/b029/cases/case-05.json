@@ -1,0 +1,20 @@
+{
+  "case_id": "case-05",
+  "data_classification": "synthetic",
+  "label": "DEMO DATA — NOT PRODUCTION",
+  "report_png": "../reports/case-05.png",
+  "report_pdf": "../reports/case-05.pdf",
+  "kintone_record": {
+    "work_date": "2026-09-05",
+    "work_order": "WO-260905-019",
+    "process": "PRESS",
+    "item_code": "PRS-520-D",
+    "actual_quantity": 1500,
+    "defect_quantity": 3
+  },
+  "expected": {
+    "status": "match",
+    "difference_fields": []
+  },
+  "scenario": "match at a higher quantity"
+}

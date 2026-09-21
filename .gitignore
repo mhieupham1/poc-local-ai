@@ -28,3 +28,4 @@ benchmarks/sources/*
 !benchmarks/sources/README.md
 !benchmarks/sources/manifest.yaml
 benchmarks/generated/
+samples/b029/generated/

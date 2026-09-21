@@ -1,0 +1,22 @@
+{
+  "case_id": "case-06",
+  "data_classification": "synthetic",
+  "label": "DEMO DATA — NOT PRODUCTION",
+  "report_png": "../reports/case-06.png",
+  "report_pdf": "../reports/case-06.pdf",
+  "kintone_record": {
+    "work_date": "2026-09-06",
+    "work_order": "WO-260906-004",
+    "process": "WELD",
+    "item_code": "WLD-110-A",
+    "actual_quantity": 1000,
+    "defect_quantity": 1
+  },
+  "expected": {
+    "status": "mismatch",
+    "difference_fields": [
+      "actual_quantity"
+    ]
+  },
+  "scenario": "mismatch — actual quantity differs"
+}

@@ -1,0 +1,22 @@
+{
+  "case_id": "case-07",
+  "data_classification": "synthetic",
+  "label": "DEMO DATA — NOT PRODUCTION",
+  "report_png": "../reports/case-07.png",
+  "report_pdf": "../reports/case-07.pdf",
+  "kintone_record": {
+    "work_date": "2026-09-07",
+    "work_order": "WO-260907-011",
+    "process": "PRESS",
+    "item_code": "PRS-240-B",
+    "actual_quantity": 840,
+    "defect_quantity": 1
+  },
+  "expected": {
+    "status": "mismatch",
+    "difference_fields": [
+      "defect_quantity"
+    ]
+  },
+  "scenario": "mismatch — defect quantity differs"
+}

@@ -1,0 +1,29 @@
+{
+  "label": "DEMO DATA — NOT PRODUCTION",
+  "rules": [
+    {
+      "id": "rule-01",
+      "text": "Ngày sản xuất trên báo cáo giấy phải khớp bản ghi Kintone."
+    },
+    {
+      "id": "rule-02",
+      "text": "Mã lệnh sản xuất phải khớp tuyệt đối trước khi xác nhận."
+    },
+    {
+      "id": "rule-03",
+      "text": "Công đoạn PRESS hoặc WELD trên phiếu phải trùng bản ghi nguồn."
+    },
+    {
+      "id": "rule-04",
+      "text": "Mã hàng được đối chiếu sau khi chuẩn hóa khoảng trắng và chữ hoa."
+    },
+    {
+      "id": "rule-05",
+      "text": "Số lượng thực tế và lỗi là số nguyên không âm; chênh lệch cần kiểm tra."
+    },
+    {
+      "id": "rule-06",
+      "text": "Không đọc được trường bắt buộc thì needs_human_review, không phải match."
+    }
+  ]
+}

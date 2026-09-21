@@ -1,0 +1,20 @@
+{
+  "case_id": "case-03",
+  "data_classification": "synthetic",
+  "label": "DEMO DATA — NOT PRODUCTION",
+  "report_png": "../reports/case-03.png",
+  "report_pdf": "../reports/case-03.pdf",
+  "kintone_record": {
+    "work_date": "2026-09-03",
+    "work_order": "WO-260903-021",
+    "process": "PRESS",
+    "item_code": "PRS-330-C",
+    "actual_quantity": 945,
+    "defect_quantity": 5
+  },
+  "expected": {
+    "status": "match",
+    "difference_fields": []
+  },
+  "scenario": "match with a non-zero defect quantity"
+}

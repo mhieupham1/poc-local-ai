@@ -1,0 +1,20 @@
+{
+  "case_id": "case-02",
+  "data_classification": "synthetic",
+  "label": "DEMO DATA — NOT PRODUCTION",
+  "report_png": "../reports/case-02.png",
+  "report_pdf": "../reports/case-02.pdf",
+  "kintone_record": {
+    "work_date": "2026-09-02",
+    "work_order": "WO-260902-014",
+    "process": "WELD",
+    "item_code": "WLD-210-B",
+    "actual_quantity": 780,
+    "defect_quantity": 0
+  },
+  "expected": {
+    "status": "match",
+    "difference_fields": []
+  },
+  "scenario": "baseline match — printed Weld report"
+}

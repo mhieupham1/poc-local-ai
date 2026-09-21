@@ -1,0 +1,11 @@
+case_id,expected_status,difference_fields,scenario
+case-01,match,,baseline match — printed Press report
+case-02,match,,baseline match — printed Weld report
+case-03,match,,match with a non-zero defect quantity
+case-04,match,,match with a different work order
+case-05,match,,match at a higher quantity
+case-06,mismatch,actual_quantity,mismatch — actual quantity differs
+case-07,mismatch,defect_quantity,mismatch — defect quantity differs
+case-08,mismatch,work_order,mismatch — work order differs by one digit
+case-09,mismatch,item_code,mismatch — item code differs
+case-10,mismatch,work_date;process,mismatch — work date and process differ

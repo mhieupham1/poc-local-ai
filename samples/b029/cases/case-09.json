@@ -1,0 +1,22 @@
+{
+  "case_id": "case-09",
+  "data_classification": "synthetic",
+  "label": "DEMO DATA — NOT PRODUCTION",
+  "report_png": "../reports/case-09.png",
+  "report_pdf": "../reports/case-09.pdf",
+  "kintone_record": {
+    "work_date": "2026-09-09",
+    "work_order": "WO-260909-016",
+    "process": "PRESS",
+    "item_code": "PRS-710-A",
+    "actual_quantity": 1110,
+    "defect_quantity": 4
+  },
+  "expected": {
+    "status": "mismatch",
+    "difference_fields": [
+      "item_code"
+    ]
+  },
+  "scenario": "mismatch — item code differs"
+}
